@@ -45,7 +45,7 @@ public class PruebaSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     }//end contructor
 
-    //Buenas tardes
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

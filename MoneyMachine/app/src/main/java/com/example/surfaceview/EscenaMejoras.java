@@ -29,18 +29,19 @@ public class EscenaMejoras extends Escenas {
 
         //Muy importante mas ideas para mejorar parte clicker, para hacer más profunda la progresión
 
-        //Crear colisiones y particulas en la pantalla principal, cuando se pulsa el boton salen disparadas
-        //x cosas(pueden ser diferentes skins que dependan de los logros) de forma aleatoria pero controlada
-        //que vayan disminuyendo su transparencia hasta que desaparezcan, y mientras, que reboten entre si y entre
-        //las paredes.
+        //Al pulsar el boton de la pantalla principal crear algunos efectos especiales(+Dinero que salga del boton
+        //y luego se desvanezca por ejemplo)
 
-        //Crear una clase(o metodo, pero tiene que ser personalizable)que genere "pantalla de avisos" o ventanas emergentes o como quieras llamarlo
-        //Una forma seria pintar un fondo de color x por encima de la pantalla con cierta transparencia
-        //y luego por encima un rectangulo con el mensaje/toma de decisiones o lo que sea.
+        //Los indicadores de la pantalla de trabajadores tienen que ser dinamicos, ajustandose a sus valores
+        //Sueldo de los trabajadores, añadir ese calculo al metodo calcularDatos
+
+        //Darle utilidad a la clase pantalla avisos y crear otro metodo que genere cuadros de dialogo con botones
+        //para las tomas de decisiones
 
 
 
-        //Poner boton dev en la pantalla principal para sumar dinero y probar las cosas(Más o menos).
+
+
 
 
     }//end constructor
@@ -78,10 +79,10 @@ public class EscenaMejoras extends Escenas {
                 dineroPulsacion += 2;
                 money -= costoMejoraPulsacion;
                 costoMejoraPulsacion *= 2;
-                //editor.putInt("money", money);
-                //editor.putInt("dineroPulsacion", dineroPulsacion);
-               // editor.putInt("costoMejoraPulsacion", costoMejoraPulsacion);
-                //editor.commit();
+                editor.putInt("money", money);
+                editor.putInt("dineroPulsacion", dineroPulsacion);
+                editor.putInt("costoMejoraPulsacion", costoMejoraPulsacion);
+                editor.commit();
             }//end if
         }//end if
 
@@ -90,10 +91,10 @@ public class EscenaMejoras extends Escenas {
                 autoclick++;
                 money -= costoMejoraAutoclick;
                 costoMejoraAutoclick *= 4;
-                //editor.putInt("money", money);
-                //editor.putInt("autoclick", autoclick);
-                //editor.putInt("costoMejoraAutoclick", costoMejoraAutoclick);
-                //editor.commit();
+                editor.putInt("money", money);
+                editor.putInt("autoclick", autoclick);
+                editor.putInt("costoMejoraAutoclick", costoMejoraAutoclick);
+                editor.commit();
             }//end if
         }//end if
 
@@ -102,10 +103,10 @@ public class EscenaMejoras extends Escenas {
                 tiempoAutoclick -= 500;
                 money -= costoTiempoAutoclick;
                 costoTiempoAutoclick *= 5;
-                //editor.putInt("money", money);
-                //editor.putInt("tiempoAutoClick", tiempoAutoclick);
-                //editor.putInt("costoTiempoAutoClick", costoTiempoAutoclick);
-                //editor.commit();
+                editor.putInt("money", money);
+                editor.putInt("tiempoAutoClick", tiempoAutoclick);
+                editor.putInt("costoTiempoAutoClick", costoTiempoAutoclick);
+                editor.commit();
             }//end if
         }//end if
 

@@ -26,15 +26,26 @@ public class Escenas {
     int numEscena;  //Cuando funcione hacerlo con string que queda mas claro
     Context context;
     int altoPantalla, anchoPantalla;
+
     //Pinceles
     Paint pincelTxt = new Paint();
     Paint pincelRec = new Paint();
+    //Pinceles que se usan para la creación de cuadros de dialogo
+    Paint pincelFondo = new Paint();
+    Paint pincelCuadro = new Paint();
+    Paint pincelTexto = new Paint();
+
     //Control de gestos
     public GestureDetectorCompat detectorDeGestos;
+
     //Bitmap que se una para dibujar los fondos, la clase que lo hereda lo define;
     Bitmap bitmapFondo;
+
     //Bitmap auxiliar que utilizamos para luego rescalar la imagen al tamaño de la pantalla
     Bitmap aux;
+
+    //Objetos de la clase pantallaAviso para generar cuadros de dialogo
+    pantallaAvisos avisoDineroOffline;
 
     //Variables con los valores que rescatamos del shared preference
     int money, dineroPulsacion, autoclick, tiempoAutoclick;
@@ -42,10 +53,10 @@ public class Escenas {
     int numeroTbj, energiaTbj, saludTbj, salarioTbj, eficienciaTbj, gananciasTbj, dineroBase, tiempoTbj, costeEnergiaTbj;
     int horaAn, minutosAn, diffTiempo, diffMin;
 
-
-
     //Variables auxiliares temporales
     int ciclosCompletados, dineroCiclo, ciclosDisponibles;
+    boolean cuadroDialogo = false;
+
     //Se utiliza para la consistencia de datos
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
@@ -80,6 +91,8 @@ public class Escenas {
         //Utilizamos el shared Preference para darle valor a las variables
         //Utilizo los valores por defecto por si es la primera vez que se juega o por si
         //se han borrado los datos
+        //Este ciclo lo repite en el constructor, por lo tanto se hace cada vez que se
+        //cambia de escena
         money = preferences.getInt("money", 0);
         dineroPulsacion = preferences.getInt("dineroPulsacion", 1);
         autoclick = preferences.getInt("autoclick", 0);
@@ -130,15 +143,6 @@ public class Escenas {
     //Tambien se utilizara en un botón del menú de opciones para guardar cada vez que el usuario
     //quiera
     public void guardarDatos(){
-        editor.putInt("money", money);
-        editor.putInt("dineroPulsacion", dineroPulsacion);
-        editor.putInt("autoclick", autoclick);
-        editor.putInt("tiempoAutoClick", tiempoAutoclick);
-        editor.putInt("costoMejoraPulsacion", costoMejoraPulsacion);
-        editor.putInt("costoMejoraAutoclick", costoMejoraAutoclick);
-        editor.putInt("costoTiempoAutoClick", costoTiempoAutoclick);
-
-        //
 
         editor.putInt("horaAn", currentTime.getHours());
         editor.putInt("minutosAn", currentTime.getMinutes());
@@ -180,6 +184,7 @@ public class Escenas {
             //24h o mas
             else {
                 Log.i("tiempo", "han pasado 24h");
+                diffTiempo = 1440;
             }//end else
         }//end else
     }//end method control temporal
@@ -243,6 +248,7 @@ public class Escenas {
                 money += dineroCiclo  * ciclosCompletados;
                 energiaTbj -= ciclosCompletados * costeEnergiaTbj;
             }//end else
+            cuadroDialogo = true;
         }//end if
 
     }//end method calcular Datos

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -26,6 +28,10 @@ public class EscenaPrincipal extends Escenas {
     Timer timer;
     int gap=2000;
     long tempTiempo=0;
+
+
+
+
 
 
     public EscenaPrincipal(int numEscena, Context context, int altoPantalla, int anchoPantalla) {
@@ -53,12 +59,23 @@ public class EscenaPrincipal extends Escenas {
         // Dentro de 0 milisegundos avísame cada 2000 milisegundos
         timer.scheduleAtFixedRate(timerTask, 0, tiempoAutoclick);
 
+        //Crea un cuadro de dialogo
+        avisoDineroOffline = new pantallaAvisos(altoPantalla,anchoPantalla, "Has ganado " + money + " mientras estabas fuera!", context, pincelFondo, pincelCuadro, pincelTexto);
 
     }//end constructor
 
     @Override
     public void dibujar(Canvas c) {
         try {
+
+            pincelFondo.setAlpha(150);
+            pincelCuadro.setColor(Color.BLACK);
+            pincelTexto.setColor(Color.WHITE);
+            pincelTexto.setTextAlign(Paint.Align.CENTER);
+            pincelTexto.setTextSize(40);
+            pincelTexto.setAntiAlias(true);
+
+
             c.drawBitmap(bitmapFondo,0, 0,null);
             c.drawRect(pulsador,pincelRec);
             c.drawRect(btnMejora, pincelRec);
@@ -66,14 +83,17 @@ public class EscenaPrincipal extends Escenas {
             c.drawRect(btnDinero, pincelRec);
             c.drawRect(btnTiempo, pincelRec);
 
-            //Timer tipo Javi que utiliza el mismo hilo que dibujar
-            //Lo hace con el tiempo actual en segundos.
-            /*
-            if (System.currentTimeMillis()-tempTiempo>gap){
-                Log.i("ss", "dibujar: ");
-                tempTiempo=System.currentTimeMillis();
+
+
+
+
+
+            if(cuadroDialogo){
+                avisoDineroOffline.cuadroEstandar(c);
             }
-            */
+
+
+
         }catch(Exception e){
             e.printStackTrace();
         }//end catch
@@ -98,7 +118,7 @@ public class EscenaPrincipal extends Escenas {
         }//end if
         if (pulsador.contains(x, y)) {
             money += dineroPulsacion;
-            //editor.putInt("money", money).commit();
+            editor.putInt("money", money).commit();
             return numEscena;
         }//end if
         if (btnMejora.contains(x, y)) {
@@ -108,18 +128,24 @@ public class EscenaPrincipal extends Escenas {
         }//end if
         if(btnDinero.contains(x, y)){
             money += 1000;
+            editor.putInt("money", money).commit();
         }//end if
 
         if(btnTiempo.contains(x, y)){
-            horaAn += 1;
+            //horaAn += 1;
+            //editor.putInt("horaAn", horaAn).commit();
         }//end if
 
 
 
 
-
+        if(cuadroDialogo)
+            cuadroDialogo = false;
         return numEscena;
    }//end onTouchEvent
+
+
+
 
 
 
