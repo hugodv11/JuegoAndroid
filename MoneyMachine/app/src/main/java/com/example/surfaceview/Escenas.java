@@ -45,10 +45,11 @@ public class Escenas {
     Bitmap aux;
 
     //Objetos de la clase pantallaAviso para generar cuadros de dialogo
-    pantallaAvisos avisoDineroOffline;
+    pantallaAvisos avisoDineroOffline, cuadroConBotones;
+
 
     //Variables con los valores que rescatamos del shared preference
-    int money, dineroPulsacion, autoclick, tiempoAutoclick;
+    int money, dineroPulsacion, autoclick, tiempoAutoclick, moneyOffline;
     int costoMejoraPulsacion, costoMejoraAutoclick, costoTiempoAutoclick;
     int numeroTbj, energiaTbj, saludTbj, salarioTbj, eficienciaTbj, gananciasTbj, dineroBase, tiempoTbj, costeEnergiaTbj;
     int horaAn, minutosAn, diffTiempo, diffMin;
@@ -111,6 +112,8 @@ public class Escenas {
         //Tiempo de la ultima conexión, si no hay una guardada se guarda la actual
         horaAn = preferences.getInt("horaAn", currentTime.getHours());
         minutosAn = preferences.getInt("minutosAn", currentTime.getMinutes());
+        //Dinero que se gana offline
+        //moneyOffline = preferences.getInt("moneyOffline", 0);
 
         //detector de gestos
          detectorDeGestos = new GestureDetectorCompat(context, new DetectorDeGestos());
@@ -242,15 +245,20 @@ public class Escenas {
             //Tenemos que tener en cuenta la diferencia entre los ciclos disponibles y los completados
             if(ciclosCompletados > ciclosDisponibles){
                 money += dineroCiclo * ciclosDisponibles;
+                moneyOffline = money;
                 energiaTbj = 0;
             }//end if
             else{
                 money += dineroCiclo  * ciclosCompletados;
+                moneyOffline = money;
                 energiaTbj -= ciclosCompletados * costeEnergiaTbj;
             }//end else
-            cuadroDialogo = true;
         }//end if
 
+        if(moneyOffline > 0){
+            cuadroDialogo = true;
+        }//end if
+        //Si hace falta guardar datos en el sharedPreferences
     }//end method calcular Datos
 
 

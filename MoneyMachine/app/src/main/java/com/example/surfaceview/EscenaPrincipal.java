@@ -29,7 +29,7 @@ public class EscenaPrincipal extends Escenas {
     int gap=2000;
     long tempTiempo=0;
 
-
+    Boolean aviso;
 
 
 
@@ -60,7 +60,9 @@ public class EscenaPrincipal extends Escenas {
         timer.scheduleAtFixedRate(timerTask, 0, tiempoAutoclick);
 
         //Crea un cuadro de dialogo
-        avisoDineroOffline = new pantallaAvisos(altoPantalla,anchoPantalla, "Has ganado " + money + " mientras estabas fuera!", context, pincelFondo, pincelCuadro, pincelTexto);
+        avisoDineroOffline = new pantallaAvisos(altoPantalla,anchoPantalla, "Has ganado " + moneyOffline + " mientras estabas fuera!", context, pincelFondo, pincelCuadro, pincelTexto);
+        cuadroConBotones = new pantallaAvisos(altoPantalla,anchoPantalla, "Hola buenas tardes", context, pincelFondo, pincelCuadro, pincelTexto);
+        aviso = false;
 
     }//end constructor
 
@@ -87,11 +89,14 @@ public class EscenaPrincipal extends Escenas {
 
 
 
-
+            //Si cuadroDialogo = true se dibuja el cuadro de dialogo
             if(cuadroDialogo){
                 avisoDineroOffline.cuadroEstandar(c);
-            }
+            }//end if
 
+            if(aviso){
+                cuadroConBotones.cuadroBotones(c);
+            }//end if
 
 
         }catch(Exception e){
@@ -111,37 +116,50 @@ public class EscenaPrincipal extends Escenas {
     public int onTouchEvent(MotionEvent event) {
         int x = (int)event.getX();
         int y = (int)event.getY();
-        if (btnOpciones.contains(x, y)) {
-            timer.cancel();
-            timer.purge();
-            return 4;
-        }//end if
-        if (pulsador.contains(x, y)) {
-            money += dineroPulsacion;
-            editor.putInt("money", money).commit();
+
+
+        if(aviso) {
+            //Cuando se toca la pantalla se cierra el cuadro de dialogo
+            if (cuadroDialogo)
+                cuadroDialogo = false;
+
+            if(cuadroConBotones.btnAceptar.contains(x, y)){
+                //Acciones para aceptar
+                aviso = false;
+            }//end if
+            if(cuadroConBotones.btnCancelar.contains(x, y)){
+                //Acciones para cancelar
+                aviso = false;
+            }//end if
+
             return numEscena;
         }//end if
-        if (btnMejora.contains(x, y)) {
-            timer.cancel();
-            timer.purge();
-            return 2;
-        }//end if
-        if(btnDinero.contains(x, y)){
-            money += 1000;
-            editor.putInt("money", money).commit();
-        }//end if
-
+        else {
+            if (btnOpciones.contains(x, y)) {
+                timer.cancel();
+                timer.purge();
+                return 4;
+            }//end if
+            if (pulsador.contains(x, y)) {
+                money += dineroPulsacion;
+                editor.putInt("money", money).commit();
+                return numEscena;
+            }//end if
+            if (btnMejora.contains(x, y)) {
+                timer.cancel();
+                timer.purge();
+                return 2;
+            }//end if
+            if (btnDinero.contains(x, y)) {
+                money += 1000;
+                editor.putInt("money", money).commit();
+            }//end if
+        }//end else
         if(btnTiempo.contains(x, y)){
-            //horaAn += 1;
-            //editor.putInt("horaAn", horaAn).commit();
-        }//end if
-
-
-
-
-        if(cuadroDialogo)
-            cuadroDialogo = false;
+            aviso = true;
+        }//end btnTiempo
         return numEscena;
+
    }//end onTouchEvent
 
 

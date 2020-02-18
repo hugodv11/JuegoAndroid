@@ -17,9 +17,9 @@ public class pantallaAvisos {
     private String texto;
     private Context context;
     private Paint pincelFondo, pincelCuadro, pincelTexto;
-    private Bitmap bitmapFondo;
-    private Bitmap aux;
+    private Bitmap bitmapFondo, aux;
     private Rect cuadro;
+    public Rect btnAceptar, btnCancelar;
 
 
     public pantallaAvisos(int altoPantalla, int anchoPantalla, String texto, Context context, Paint pincelFondo, Paint pincelCuadro, Paint pincelTexto) {
@@ -96,13 +96,22 @@ public class pantallaAvisos {
         this.bitmapFondo = bitmapFondo;
     }
 
+
+
+
+    //El bitmap fondo y auxiliar sirven para poder poner la imagen que va a aparecer con transpariencia
+    //Necesario que el texto no se salga del cuadro(no creo que lo haga de forma correcta, probare cuantas letras
+    //entran mas o menos cuando cambie la fuente, y añadire un salto de linea y pa diante)
+    //Todos los colores se pueden cambiar con los pinceles
+
+
     //METODOS
 
+    //Metodo que dibuja un cuadro de dialogo informativo, sin botones y sin ser interactuable
     public void cuadroEstandar(Canvas c){
         aux = BitmapFactory.decodeResource(context.getResources(), R.drawable.mejoras);
         bitmapFondo = aux.createScaledBitmap(aux,anchoPantalla, altoPantalla,true);
         cuadro = new Rect(anchoPantalla/2 - 300, altoPantalla/2 - 300, anchoPantalla/2 + 300, altoPantalla/2 + 300);
-
         //Zona de dibujado
         c.drawBitmap(bitmapFondo, 0, 0, pincelFondo);
         c.drawRect(cuadro, pincelCuadro);
@@ -111,16 +120,29 @@ public class pantallaAvisos {
 
 
 
+    public void cuadroBotones(Canvas c){
+        aux = BitmapFactory.decodeResource(context.getResources(), R.drawable.mejoras);
+        bitmapFondo = aux.createScaledBitmap(aux,anchoPantalla, altoPantalla,true);
+        cuadro = new Rect(anchoPantalla/2 - 300, altoPantalla/2 - 300, anchoPantalla/2 + 300, altoPantalla/2 + 300);
+        btnAceptar = new Rect(anchoPantalla/2 - 300, altoPantalla/2 + 150, anchoPantalla/2, altoPantalla/2 + 300);
+        btnCancelar = new Rect(anchoPantalla/2, altoPantalla/2 + 150, anchoPantalla/2 + 300, altoPantalla/2 + 300);
 
 
+        //Zona de dibujado
+        c.drawBitmap(bitmapFondo, 0, 0, pincelFondo);
+        c.drawRect(cuadro, pincelCuadro);
+        c.drawText(texto, anchoPantalla/2, altoPantalla/2, pincelTexto);
+        pincelCuadro.setColor(Color.RED);
+        c.drawRect(btnAceptar, pincelCuadro);
+        c.drawRect(btnCancelar, pincelCuadro);
+        int aceptCenterX = btnAceptar.centerX();
+        int aceptCenterY = btnAceptar.centerY();
+        int cancelCenterX = btnCancelar.centerX();
+        int cancelCenterY = btnCancelar.centerY();
+        c.drawText("Aceptar", aceptCenterX, aceptCenterY, pincelTexto);
+        c.drawText("Cancelar", cancelCenterX, cancelCenterY, pincelTexto);
 
-
-
-
-
-
-
-
+    }//end method cuadroBotones
 
 
 
