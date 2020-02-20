@@ -30,6 +30,7 @@ public class Escenas {
     //Pinceles
     Paint pincelTxt = new Paint();
     Paint pincelRec = new Paint();
+    Paint pincelPrueba = new Paint();
     //Pinceles que se usan para la creación de cuadros de dialogo
     Paint pincelFondo = new Paint();
     Paint pincelCuadro = new Paint();
@@ -113,10 +114,10 @@ public class Escenas {
         horaAn = preferences.getInt("horaAn", currentTime.getHours());
         minutosAn = preferences.getInt("minutosAn", currentTime.getMinutes());
         //Dinero que se gana offline
-        //moneyOffline = preferences.getInt("moneyOffline", 0);
+        moneyOffline = preferences.getInt("moneyOffline", 0);
 
         //detector de gestos
-         detectorDeGestos = new GestureDetectorCompat(context, new DetectorDeGestos());
+        detectorDeGestos = new GestureDetectorCompat(context, new DetectorDeGestos());
 
 
         Log.i("tiempo", "Ultima hora de sesión : " + horaAn + " : " + minutosAn);
@@ -245,13 +246,19 @@ public class Escenas {
             //Tenemos que tener en cuenta la diferencia entre los ciclos disponibles y los completados
             if(ciclosCompletados > ciclosDisponibles){
                 money += dineroCiclo * ciclosDisponibles;
-                moneyOffline = money;
+                moneyOffline = dineroCiclo * ciclosDisponibles;
+                Log.i("tiempo", "calculo" + (dineroCiclo * ciclosDisponibles));
+                Log.i("tiempo", "moneyOffline " + moneyOffline);
                 energiaTbj = 0;
+                Log.i("tiempo", "energia trabajadores " + energiaTbj);
             }//end if
             else{
                 money += dineroCiclo  * ciclosCompletados;
-                moneyOffline = money;
+                moneyOffline = dineroCiclo * ciclosDisponibles;
+                Log.i("tiempo", "calculo" + (dineroCiclo * ciclosDisponibles));
+                Log.i("tiempo", "moneyoffline " + moneyOffline);
                 energiaTbj -= ciclosCompletados * costeEnergiaTbj;
+                Log.i("tiempo", "energia trabajadores " + energiaTbj);
             }//end else
         }//end if
 
@@ -259,9 +266,20 @@ public class Escenas {
             cuadroDialogo = true;
         }//end if
         //Si hace falta guardar datos en el sharedPreferences
+        editor.putInt("energiaTbj", energiaTbj);
+        editor.putInt("money", money);
+        editor.putInt("moneyOffline", moneyOffline);
+        editor.commit();
+
     }//end method calcular Datos
 
 
+
+    public void particulas(){
+
+
+
+    }//end particulas
 
 
     public void actualizarFisica(){

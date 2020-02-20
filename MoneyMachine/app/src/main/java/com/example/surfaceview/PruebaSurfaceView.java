@@ -105,7 +105,9 @@ public class PruebaSurfaceView extends SurfaceView implements SurfaceHolder.Call
         altoPantalla = height;
 
         escenaActual = new EscenaPrincipal(1, context,altoPantalla,anchoPantalla);
-        //Se puede poner en surface created?
+
+        //Control temporal y calculo de los datos que lanzamos cuando le damos
+        //valor a escenaActual por primera vez.
         escenaActual.controlTemporal();
         escenaActual.calcularDatos();
         hilo.setSurfaceSize(width, height);
