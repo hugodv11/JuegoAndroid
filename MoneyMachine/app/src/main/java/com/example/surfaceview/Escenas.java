@@ -275,13 +275,6 @@ public class Escenas {
 
 
 
-    public void particulas(){
-
-
-
-    }//end particulas
-
-
     public void actualizarFisica(){
     }
 

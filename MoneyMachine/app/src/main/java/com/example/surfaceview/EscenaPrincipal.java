@@ -1,14 +1,12 @@
 package com.example.surfaceview;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import java.util.Random;
@@ -26,13 +24,10 @@ public class EscenaPrincipal extends Escenas {
     int gap=2000;
     long tempTiempo=0;
 
-    //Variables para el movimiento del texto por pantalla
-    //cuando se pulsa el boton
-    Point posicion;
-    int alpha;
     int randomPosX;
+    movimientoNumero mov;
+    Boolean aviso, moverNumero;
 
-    Boolean aviso, pulsacion;
 
 
 
@@ -65,14 +60,13 @@ public class EscenaPrincipal extends Escenas {
         //Cuadros de dialogo
         avisoDineroOffline = new pantallaAvisos(altoPantalla,anchoPantalla, "Has ganado " + moneyOffline + " mientras estabas fuera!", context, pincelFondo, pincelCuadro, pincelTexto);
         cuadroConBotones = new pantallaAvisos(altoPantalla,anchoPantalla, "Hola buenas tardes", context, pincelFondo, pincelCuadro, pincelTexto);
-        randomPosX = new Random().nextInt(pulsador.width()) + anchoPantalla/3;
-        Log.i("tiempo", "Random : " + randomPosX);
-        posicion = new Point(randomPosX, (altoPantalla/3) * 2);
-        alpha = 255;
-        pulsacion = false;
         //Aviso es una booleana que controla cuando se dibujan los cuadros de información, dependiendo de diferentes eventos
         //cambiaremos esta booleana a true.
         aviso = false;
+        moverNumero = false;
+
+
+
 
     }//end constructor
 
@@ -105,9 +99,12 @@ public class EscenaPrincipal extends Escenas {
             if(aviso){
                 cuadroConBotones.cuadroBotones(c);
             }//end if
-            if(pulsacion){
-                c.drawText("1", posicion.x,posicion.y, pincelPrueba);
-            }
+            if(moverNumero){
+                mov.dibuja(c);
+                mov.movimiento();
+                moverNumero = false;
+            }//end if
+
 
 
         }catch(Exception e){
@@ -120,13 +117,6 @@ public class EscenaPrincipal extends Escenas {
     public void actualizarFisica() {
         //super.actualizarFisica();
         //Movimiento del texto por pantalla
-        if(pulsacion) {
-            while (alpha > 0) {
-                alpha -= 1;
-            }//end while
-           // pulsacion = false;
-        }//end if
-
 
     }//end actualizarFisica
 
@@ -158,8 +148,12 @@ public class EscenaPrincipal extends Escenas {
             }//end if
             if (pulsador.contains(x, y)) {
                 money += dineroPulsacion;
-                pulsacion = true;
                 editor.putInt("money", money).commit();
+                //Movimiento del numero por pantalla
+                randomPosX = new Random().nextInt(pulsador.width()) + anchoPantalla/3;
+                Point p = new Point(randomPosX, anchoPantalla/3);
+                mov = new movimientoNumero(money, 150, p);
+                moverNumero = true;
                 return numEscena;
             }//end if
             if (btnMejora.contains(x, y)) {
