@@ -52,12 +52,13 @@ public class Escenas {
     //Variables con los valores que rescatamos del shared preference
     int money, dineroPulsacion, autoclick, tiempoAutoclick, moneyOffline;
     int costoMejoraPulsacion, costoMejoraAutoclick, costoTiempoAutoclick;
-    int numeroTbj, energiaTbj, saludTbj, salarioTbj, eficienciaTbj, gananciasTbj, dineroBase, tiempoTbj, costeEnergiaTbj;
+
     int horaAn, minutosAn, diffTiempo, diffMin;
 
-    //Variables auxiliares temporales
-    int ciclosCompletados, dineroCiclo, ciclosDisponibles;
-    boolean cuadroDialogo = false;
+    //Objeto de tipo trabajadores
+    Trabajadores trabajadores = new Trabajadores();
+
+
 
     //Se utiliza para la consistencia de datos
     SharedPreferences preferences;
@@ -94,7 +95,7 @@ public class Escenas {
         //Utilizo los valores por defecto por si es la primera vez que se juega o por si
         //se han borrado los datos
         //Este ciclo lo repite en el constructor, por lo tanto se hace cada vez que se
-        //cambia de escena
+        //cambia de escena conservando así todos los cambios entre ellas
         money = preferences.getInt("money", 0);
         dineroPulsacion = preferences.getInt("dineroPulsacion", 1);
         autoclick = preferences.getInt("autoclick", 0);
@@ -102,14 +103,17 @@ public class Escenas {
         costoMejoraPulsacion = preferences.getInt("costoMejoraPulsacion", 4);
         costoMejoraAutoclick = preferences.getInt("costoMejoraAutoclick", 30);
         costoTiempoAutoclick = preferences.getInt("costoTiempoAutoClick", 300);
-        numeroTbj = preferences.getInt("numeroTrabajadores", 5);
-        energiaTbj = preferences.getInt("energiaTrabajadores", 100);
-        saludTbj = preferences.getInt("saludTrabajadores", 100);
-        salarioTbj = preferences.getInt("salarioTbj", 1500);
-        dineroBase = preferences.getInt("dineroBase", 100);
-        eficienciaTbj = preferences.getInt("eficienciaTbj", 30);
-        tiempoTbj = preferences.getInt("tiempoTbj", 240);
-        costeEnergiaTbj = preferences.getInt("costeEnergiaTbj", 5);
+
+        //Valores de la clase Trabajadores
+        trabajadores.numero = preferences.getInt("numeroTrabajadores", 5);
+        trabajadores.energia = preferences.getInt("energiaTrabajadores", 100);
+        trabajadores.salud = preferences.getInt("saludTrabajadores", 100);
+        trabajadores.salario = preferences.getInt("salarioTbj", 1500);
+        trabajadores.dineroBase = preferences.getInt("dineroBase", 100);
+        trabajadores.eficiencia = preferences.getInt("eficienciaTbj", 5);
+        trabajadores.tiempo = preferences.getInt("tiempoTbj", 240);
+        trabajadores.costeEnergia = preferences.getInt("costeEnergiaTbj", 1);
+
         //Tiempo de la ultima conexión, si no hay una guardada se guarda la actual
         horaAn = preferences.getInt("horaAn", currentTime.getHours());
         minutosAn = preferences.getInt("minutosAn", currentTime.getMinutes());
@@ -199,77 +203,46 @@ public class Escenas {
 
     //Metodo que calcula los beneficios que se generan de forma offline
     public void calcularDatos(){
+
         //primero calculamos el dinero que generan cada trabajador
         //Esto dependera de la salud de los trabajadores
-
-        if(saludTbj == 100){
-            gananciasTbj = dineroBase * 2;
-        } else{
-            //Si la salud está por debajo del 40% esto repercutirá de forma negativa
-            if(saludTbj <= 40){
-              double calculo = saludTbj / 100.0;
-              gananciasTbj = (int)(dineroBase * calculo);
-            }//end if
-            else{
-                double calculo = (saludTbj / 100.0) + 1;
-                gananciasTbj = (int)(dineroBase * calculo);
-            }//end else
-        }//end else
+        trabajadores.gananciasTrabajador();
 
         //Antes de hacer ningun cambio o calculo mas, calculamos cuantos ciclos son capaces de hacer
         //los trabajadores antes de que se les acabe la energia
-        ciclosDisponibles = energiaTbj / costeEnergiaTbj;
+        trabajadores.ciclosDisponibles(diffTiempo);
 
-        //Si tenemos como minimo un ciclo disponible procedemos con los calculos
-        if(ciclosDisponibles > 0) {
-            //Ahora comparamos el tiempo offline transcurrido y el tiempo maximo que los trabajadores
-            //generan dinero, si el tiempo offline es mayor, solo tendremos en cuenta las horas
-            //en la que los trabajadores aun estaban activos
-            if (diffTiempo > tiempoTbj) {
-                //numero de ciclos que los trabajadores han completado
-                ciclosCompletados = tiempoTbj / eficienciaTbj;
-                //valor que se genera en cada ciclo
-                dineroCiclo = gananciasTbj * numeroTbj;
-                //eficienciatbj es la variable que nos marca cada cuantos minutos nuestros trabajadores
-                //ganan dinero, empezara siendo cada hora, y cuanto mas lo mejores mas ira disminuyendo
-                //dicha variable
-            }//end if
-            else {
-                ciclosCompletados = diffTiempo / eficienciaTbj;
-                dineroCiclo = gananciasTbj * numeroTbj;
-            }//end else
+        //despues de calcular cuanto gana cada trabajador y cada cuanto ya podemos sumar el dinero
+        //ganado a la variable money
+        //Tenemos que tener en cuenta la diferencia entre los ciclos disponibles y los completados
 
-            //despues de calcular cuanto gana cada trabajador y cada cuanto ya podemos sumar el dinero
-            //ganado a la variable money (lo suyo sería hacerlo com un fragment, es decir, dibujar la pantalla
-            //normal, despues una pantalla con alpha, de color no se, gris, y despues un rectangulo con el alpha a
-            //tope con el texto
-            //Tenemos que tener en cuenta la diferencia entre los ciclos disponibles y los completados
-            if(ciclosCompletados > ciclosDisponibles){
-                money += dineroCiclo * ciclosDisponibles;
-                moneyOffline = dineroCiclo * ciclosDisponibles;
-                Log.i("tiempo", "calculo" + (dineroCiclo * ciclosDisponibles));
-                Log.i("tiempo", "moneyOffline " + moneyOffline);
-                energiaTbj = 0;
-                Log.i("tiempo", "energia trabajadores " + energiaTbj);
-            }//end if
-            else{
-                money += dineroCiclo  * ciclosCompletados;
-                moneyOffline = dineroCiclo * ciclosDisponibles;
-                Log.i("tiempo", "calculo" + (dineroCiclo * ciclosDisponibles));
-                Log.i("tiempo", "moneyoffline " + moneyOffline);
-                energiaTbj -= ciclosCompletados * costeEnergiaTbj;
-                Log.i("tiempo", "energia trabajadores " + energiaTbj);
-            }//end else
-        }//end if
+        money += trabajadores.dineroCiclo * trabajadores.ciclosCompletados;
+        moneyOffline = trabajadores.dineroCiclo * trabajadores.ciclosCompletados;
+        trabajadores.energia -= trabajadores.ciclosCompletados * trabajadores.costeEnergia;
+
+        /*
+        Log.i("tiempo", "salud = " + trabajadores.salud);
+        Log.i("tiempo", "dineroBase = " + trabajadores.dineroBase);
+        Log.i("tiempo", "ganancias = " + trabajadores.ganancias);
+        Log.i("tiempo", "ciclosDisponibles = " + trabajadores.ciclosDisponibles);
+        Log.i("tiempo", "ciclosCompletados = " + trabajadores.ciclosCompletados);
+        Log.i("tiempo", "calculo" + (trabajadores.dineroCiclo * trabajadores.ciclosCompletados));
+        Log.i("tiempo", "moneyOffline " + moneyOffline);
+        Log.i("tiempo", "energia trabajadores " + trabajadores.energia);
+        */
 
         if(moneyOffline > 0){
-            cuadroDialogo = true;
+            trabajadores.mensajeBeneficios = true;
         }//end if
-        //Si hace falta guardar datos en el sharedPreferences
-        editor.putInt("energiaTbj", energiaTbj);
+
+
+        //Actualización de los datos en el shared preference
+        editor.putInt("energiaTbj", trabajadores.energia);
         editor.putInt("money", money);
         editor.putInt("moneyOffline", moneyOffline);
         editor.commit();
+
+
 
     }//end method calcular Datos
 

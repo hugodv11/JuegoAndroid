@@ -103,9 +103,7 @@ public class PruebaSurfaceView extends SurfaceView implements SurfaceHolder.Call
     public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
         anchoPantalla = width;
         altoPantalla = height;
-
         escenaActual = new EscenaPrincipal(1, context,altoPantalla,anchoPantalla);
-
         //Control temporal y calculo de los datos que lanzamos cuando le damos
         //valor a escenaActual por primera vez.
         escenaActual.controlTemporal();

@@ -47,10 +47,10 @@ public class EscenaTrabajadores extends Escenas {
         c.drawRect(btnMas, pincelRec);
         c.drawRect(btnMenos, pincelRec);
         //c.drawText("" + numeroTbj, anchoPantalla/ 10 * 2, altoPantalla - 200, pincelTxt);
-        c.drawText("" + numeroTbj, numPosX, numPosY + 20, pincelTxt);
-        c.drawText(energiaTbj + "%", enerPosX, enerPosY + 20, pincelTxt);
-        c.drawText(saludTbj + "%", vitPosX, vitPosY + 20, pincelTxt);
-        c.drawText(salarioTbj + "",550, 425, pincelTxt);
+        c.drawText("" + trabajadores.numero, numPosX, numPosY + 20, pincelTxt);
+        c.drawText(trabajadores.energia + "%", enerPosX, enerPosY + 20, pincelTxt);
+        c.drawText(trabajadores.salud + "%", vitPosX, vitPosY + 20, pincelTxt);
+        c.drawText(trabajadores.salario + "",550, 425, pincelTxt);
         super.dibujar(c);
     }
 
@@ -63,12 +63,12 @@ public class EscenaTrabajadores extends Escenas {
             return 1;
         }//end if
         if(btnMas.contains(x, y)) {
-            salarioTbj += 100;
-            editor.putInt("salarioTbj", salarioTbj).commit();
+            trabajadores.salario += 100;
+            editor.putInt("salarioTbj", trabajadores.salario).commit();
         }//end if
         if(btnMenos.contains(x, y)) {
-            salarioTbj -= 100;
-            editor.putInt("salarioTbj", salarioTbj).commit();
+            trabajadores.salario -= 100;
+            editor.putInt("salarioTbj", trabajadores.salario).commit();
         }//end if
         return numEscena;
     }//end onTouchEvent

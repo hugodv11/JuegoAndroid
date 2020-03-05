@@ -58,7 +58,7 @@ public class EscenaPrincipal extends Escenas {
         timer.scheduleAtFixedRate(timerTask, 0, tiempoAutoclick);
 
         //Cuadros de dialogo
-        avisoDineroOffline = new pantallaAvisos(altoPantalla,anchoPantalla, "Has ganado " + moneyOffline + " mientras estabas fuera!", context, pincelFondo, pincelCuadro, pincelTexto);
+
         cuadroConBotones = new pantallaAvisos(altoPantalla,anchoPantalla, "Hola buenas tardes", context, pincelFondo, pincelCuadro, pincelTexto);
         //Aviso es una booleana que controla cuando se dibujan los cuadros de información, dependiendo de diferentes eventos
         //cambiaremos esta booleana a true.
@@ -93,18 +93,21 @@ public class EscenaPrincipal extends Escenas {
             c.drawRect(btnTiempo, pincelRec);
 
             //Si cuadroDialogo = true se dibuja el cuadro de dialogo
-            if(cuadroDialogo){
+            if(trabajadores.mensajeBeneficios){
+                avisoDineroOffline = new pantallaAvisos(altoPantalla,anchoPantalla, "Has ganado " + moneyOffline + " mientras estabas fuera!", context, pincelFondo, pincelCuadro, pincelTexto);
                 avisoDineroOffline.cuadroEstandar(c);
             }//end if
             if(aviso){
                 cuadroConBotones.cuadroBotones(c);
             }//end if
+
+            /*
             if(moverNumero){
                 mov.dibuja(c);
                 mov.movimiento();
                 moverNumero = false;
             }//end if
-
+            */
 
 
         }catch(Exception e){
@@ -116,7 +119,7 @@ public class EscenaPrincipal extends Escenas {
     @Override
     public void actualizarFisica() {
         //super.actualizarFisica();
-        //Movimiento del texto por pantalla
+
 
     }//end actualizarFisica
 
@@ -149,11 +152,15 @@ public class EscenaPrincipal extends Escenas {
             if (pulsador.contains(x, y)) {
                 money += dineroPulsacion;
                 editor.putInt("money", money).commit();
+
+                /*
                 //Movimiento del numero por pantalla
                 randomPosX = new Random().nextInt(pulsador.width()) + anchoPantalla/3;
                 Point p = new Point(randomPosX, anchoPantalla/3);
                 mov = new movimientoNumero(money, 150, p);
                 moverNumero = true;
+                 */
+
                 return numEscena;
             }//end if
             if (btnMejora.contains(x, y)) {
@@ -171,11 +178,12 @@ public class EscenaPrincipal extends Escenas {
         }//end btnTiempo
 
         //Cuando se toca la pantalla se cierra el cuadro de dialogo
-        if (cuadroDialogo)
-            cuadroDialogo = false;
+        if (trabajadores.mensajeBeneficios)
+        {
+            trabajadores.mensajeBeneficios = false;
+        }//end if
 
         return numEscena;
-
    }//end onTouchEvent
 
 
