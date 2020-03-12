@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.media.AudioManager;
 import android.view.MotionEvent;
 
 import java.util.Random;
@@ -152,7 +153,9 @@ public class EscenaPrincipal extends Escenas {
             if (pulsador.contains(x, y)) {
                 money += dineroPulsacion;
                 editor.putInt("money", money).commit();
-
+                //Sonido que se genera
+                int v = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                efectos.play(sonidoCoin,1,1,1,0,1);
                 /*
                 //Movimiento del numero por pantalla
                 randomPosX = new Random().nextInt(pulsador.width()) + anchoPantalla/3;

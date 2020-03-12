@@ -6,6 +6,10 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Build;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -23,11 +27,11 @@ import javax.security.auth.login.LoginException;
 public class Escenas {
     //ATRIBUTOS PARA LAS ESCENAS
 
-    int numEscena;  //Cuando funcione hacerlo con string que queda mas claro
+    int numEscena;
     Context context;
     int altoPantalla, anchoPantalla;
 
-    //Pinceles
+    //Pinceles//Cambiar a una clase
     Paint pincelTxt = new Paint();
     Paint pincelRec = new Paint();
     Paint pincelPrueba = new Paint();
@@ -35,6 +39,13 @@ public class Escenas {
     Paint pincelFondo = new Paint();
     Paint pincelCuadro = new Paint();
     Paint pincelTexto = new Paint();
+
+
+    //Variables para el control de sonido
+    public AudioManager audioManager;
+    public SoundPool efectos;
+    public int sonidoCoin;
+    public int maxSonidosSimultaneos = 10;
 
     //Control de gestos
     public GestureDetectorCompat detectorDeGestos;
@@ -76,6 +87,20 @@ public class Escenas {
         this.altoPantalla = altoPantalla;
         this.anchoPantalla = anchoPantalla;
 
+        //Control de sonido
+        audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        if((android.os.Build.VERSION.SDK_INT) >= 21){
+            SoundPool.Builder spb=new SoundPool.Builder();
+            spb.setAudioAttributes(new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build());
+            spb.setMaxStreams(maxSonidosSimultaneos);
+            this.efectos = spb.build();
+        }//end if
+        else{
+            this.efectos = new SoundPool(maxSonidosSimultaneos, AudioManager.STREAM_MUSIC, 0);
+        }//end else
+        sonidoCoin = efectos.load(context, R.raw.coin,1);
+
         //USAR SHARED PREFERENCES PARA LA CONSISTENCIA DE DATOS
         //Estoy pensado que como getSharedPreferences te deja tener mas de un archivo
         //Separar datos que si se pueden borrar para empezar pero otros guardarlos como los logros
@@ -96,6 +121,7 @@ public class Escenas {
         //se han borrado los datos
         //Este ciclo lo repite en el constructor, por lo tanto se hace cada vez que se
         //cambia de escena conservando así todos los cambios entre ellas
+        //Cambiar todo este codigo a un metodo o una clase
         money = preferences.getInt("money", 0);
         dineroPulsacion = preferences.getInt("dineroPulsacion", 1);
         autoclick = preferences.getInt("autoclick", 0);
@@ -130,6 +156,11 @@ public class Escenas {
     }//end constructor
 
 
+    /**
+     * Metodo que se utiliza para dibujar en el canvas.
+     *
+     * @param c  Canvas en el que se va a dibujar
+     */
     public void dibujar(Canvas c){
         //Atributos de los pinceles
         pincelTxt.setTextSize(70);
@@ -150,6 +181,10 @@ public class Escenas {
     //superficie de dibujo para guardar datos en el shared preference
     //Tambien se utilizara en un botón del menú de opciones para guardar cada vez que el usuario
     //quiera
+
+    /**
+     *
+     */
     public void guardarDatos(){
 
         editor.putInt("horaAn", currentTime.getHours());
@@ -158,7 +193,13 @@ public class Escenas {
     }//end method guardarDatos
 
 
-    //Metodo que controla el tiempo transcurrido desde la ultima conexión
+    /**
+     * Calcula la diferencia de tiempo entre la ultima hora de
+     * conexión y la actual y guarda ese valor en la variable
+     * diffTiempo.
+     *
+     * diffTiempo se mide en minutos.
+     */
     public void controlTemporal(){
 
         diffTiempo = currentTime.getHours() - horaAn;
@@ -197,10 +238,6 @@ public class Escenas {
         }//end else
     }//end method control temporal
 
-
-
-
-
     //Metodo que calcula los beneficios que se generan de forma offline
     public void calcularDatos(){
 
@@ -235,15 +272,11 @@ public class Escenas {
             trabajadores.mensajeBeneficios = true;
         }//end if
 
-
         //Actualización de los datos en el shared preference
         editor.putInt("energiaTbj", trabajadores.energia);
         editor.putInt("money", money);
         editor.putInt("moneyOffline", moneyOffline);
         editor.commit();
-
-
-
     }//end method calcular Datos
 
 
@@ -253,7 +286,6 @@ public class Escenas {
 
 
     public int  onTouchEvent(MotionEvent event){
-
         return numEscena;
     }//end onTouchEvent
 
