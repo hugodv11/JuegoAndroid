@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Build;
 import android.util.Log;
@@ -42,10 +43,13 @@ public class Escenas {
 
 
     //Variables para el control de sonido
+    //Efectos de sonido
     public AudioManager audioManager;
     public SoundPool efectos;
     public int sonidoCoin;
     public int maxSonidosSimultaneos = 10;
+
+
 
     //Control de gestos
     public GestureDetectorCompat detectorDeGestos;
@@ -69,8 +73,6 @@ public class Escenas {
     //Objeto de tipo trabajadores
     Trabajadores trabajadores = new Trabajadores();
 
-
-
     //Se utiliza para la consistencia de datos
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
@@ -87,7 +89,7 @@ public class Escenas {
         this.altoPantalla = altoPantalla;
         this.anchoPantalla = anchoPantalla;
 
-        //Control de sonido
+
         audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
         if((android.os.Build.VERSION.SDK_INT) >= 21){
             SoundPool.Builder spb=new SoundPool.Builder();
@@ -100,6 +102,7 @@ public class Escenas {
             this.efectos = new SoundPool(maxSonidosSimultaneos, AudioManager.STREAM_MUSIC, 0);
         }//end else
         sonidoCoin = efectos.load(context, R.raw.coin,1);
+
 
         //USAR SHARED PREFERENCES PARA LA CONSISTENCIA DE DATOS
         //Estoy pensado que como getSharedPreferences te deja tener mas de un archivo

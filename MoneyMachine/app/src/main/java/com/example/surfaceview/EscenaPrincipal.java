@@ -1,6 +1,7 @@
 package com.example.surfaceview;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.view.MotionEvent;
 
 import java.util.Random;
@@ -29,8 +31,10 @@ public class EscenaPrincipal extends Escenas {
     movimientoNumero mov;
     Boolean aviso, moverNumero;
 
+    //Control de la musica
+    public MediaPlayer mediaPlayer;
 
-
+    Bitmap bitmapOpciones, bitmapMejoras;
 
 
     public EscenaPrincipal(int numEscena, Context context, int altoPantalla, int anchoPantalla) {
@@ -38,10 +42,23 @@ public class EscenaPrincipal extends Escenas {
         aux = BitmapFactory.decodeResource(context.getResources(),R.drawable.oficina);
         bitmapFondo = aux.createScaledBitmap(aux,anchoPantalla, altoPantalla,true);
 
+
         //Cuadrados que se utilizaran para saber si se a pulsado en ellos
         pulsador = new Rect(anchoPantalla / 3,(altoPantalla/3) * 2,anchoPantalla - anchoPantalla / 3,altoPantalla - anchoPantalla / 3);
-        btnMejora = new Rect(anchoPantalla - 100, 0, anchoPantalla, 100);
-        btnOpciones = new Rect(0, 0, 100,100);
+        btnMejora = new Rect(anchoPantalla - anchoPantalla/9, 0, anchoPantalla, anchoPantalla/9);
+        btnOpciones = new Rect(0, 0, anchoPantalla/9,anchoPantalla/9);
+
+        //Imagen de menu de opciones
+        aux = BitmapFactory.decodeResource(context.getResources(),R.drawable.menu);
+        bitmapOpciones = aux.createScaledBitmap(aux, btnOpciones.width(), btnOpciones.height(), true);
+
+        //Imagen de pantalla de mejoras
+        aux = BitmapFactory.decodeResource(context.getResources(),R.drawable.mejora);
+        bitmapMejoras = aux.createScaledBitmap(aux, btnOpciones.width(), btnOpciones.height(), true);
+
+
+
+        //Bototes de depuración, se pueden borrar en cualquier momento
         btnDinero = new Rect(150, 150, 300,300);
         btnTiempo = new Rect(150, 400, 300,550);
 
@@ -58,8 +75,14 @@ public class EscenaPrincipal extends Escenas {
         // Dentro de 0 milisegundos avísame cada 2000 milisegundos
         timer.scheduleAtFixedRate(timerTask, 0, tiempoAutoclick);
 
-        //Cuadros de dialogo
+        //Musica de la pantalla
+        mediaPlayer = MediaPlayer.create(context, R.raw.principal);
+        mediaPlayer.setVolume(1, 1);
+        //Comentado para que no de por culo
+        //mediaPlayer.start();
 
+
+        //Cuadros de dialogo
         cuadroConBotones = new pantallaAvisos(altoPantalla,anchoPantalla, "Hola buenas tardes", context, pincelFondo, pincelCuadro, pincelTexto);
         //Aviso es una booleana que controla cuando se dibujan los cuadros de información, dependiendo de diferentes eventos
         //cambiaremos esta booleana a true.
@@ -87,11 +110,14 @@ public class EscenaPrincipal extends Escenas {
             //pincelPrueba.setAlpha(alpha);
 
             c.drawBitmap(bitmapFondo,0, 0,null);
+
             c.drawRect(pulsador,pincelRec);
-            c.drawRect(btnMejora, pincelRec);
-            c.drawRect(btnOpciones, pincelRec);
-            c.drawRect(btnDinero, pincelRec);
+
             c.drawRect(btnTiempo, pincelRec);
+
+            //Imagenes de los botones
+            c.drawBitmap(bitmapOpciones,0, 0, null);
+            c.drawBitmap(bitmapMejoras,anchoPantalla - btnOpciones.width(), 0,null);
 
             //Si cuadroDialogo = true se dibuja el cuadro de dialogo
             if(trabajadores.mensajeBeneficios){
